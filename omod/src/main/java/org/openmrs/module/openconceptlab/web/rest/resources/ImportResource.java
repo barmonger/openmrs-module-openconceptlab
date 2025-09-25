@@ -269,7 +269,7 @@ public class ImportResource extends DelegatingCrudResource<Import> implements Up
 
         if (multipartFile.isEmpty()) {
             throw new IllegalRequestException("File uploaded cannot be empty");
-        } else if (!StringUtils.equalsIgnoreCase(multipartFile.getContentType(), "application/zip")) {
+        } else if (!isZipFileType(multipartFile)) {
             throw new IllegalRequestException("Supplied file must be a zip file");
         }
 
@@ -285,5 +285,10 @@ public class ImportResource extends DelegatingCrudResource<Import> implements Up
         updateScheduler.scheduleNow();
 
         return importService.getLastImport();
+    }
+
+    private static boolean isZipFileType(MultipartFile multipartFile) {
+        String contentType = multipartFile.getContentType();
+        return StringUtils.equalsIgnoreCase(contentType, "application/zip") || StringUtils.equalsIgnoreCase(contentType, "application/x-zip-compressed");
     }
 }
